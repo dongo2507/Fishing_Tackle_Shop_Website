@@ -38,3 +38,5 @@ form.inline { display: inline; }
 .form .check { font-weight: normal; }
 .form .req { color: #b00020; }
 .form-actions { margin-top: 20px; display: flex; gap: 8px; }
+.logo-thumb { height: 32px; max-width: 90px; object-fit: contain; }
+

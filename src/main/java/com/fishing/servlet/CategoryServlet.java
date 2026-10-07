@@ -126,7 +126,6 @@ public class CategoryServlet extends HttpServlet {
         redirectToList(req, resp);
     }
 
-    // ---------- Hàm hỗ trợ ----------
 
     private String validate(Category c, Long id) {
         if (c.getName().isEmpty()) {
@@ -164,7 +163,6 @@ public class CategoryServlet extends HttpServlet {
         return s == null ? "" : s.trim();
     }
 
-    /** Thông báo một lần, hiển thị sau khi redirect (Post-Redirect-Get). */
     private void flash(HttpServletRequest req, String type, String message) {
         req.getSession().setAttribute("flashType", type);
         req.getSession().setAttribute("flashMessage", message);

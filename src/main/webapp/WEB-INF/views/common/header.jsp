@@ -15,6 +15,7 @@
     <span class="brand">Fishing Shop - Quản trị</span>
     <nav>
         <a href="${ctx}/admin/categories">Danh mục</a>
+        <a href="${ctx}/admin/brands">Thương hiệu</a>
     </nav>
 </header>
 <main class="container">
