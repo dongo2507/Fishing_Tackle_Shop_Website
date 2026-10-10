@@ -13,7 +13,7 @@
 </head>
 <body>
 <header class="topbar">
-    <span class="brand">Fishing Tackle Shop - Quản trị</span>
+    <span class="brand">Fishing Shop - Quản trị</span>
     <nav>
         <a href="${ctx}/admin/products">Sản phẩm</a>
         <a href="${ctx}/admin/categories">Danh mục</a>

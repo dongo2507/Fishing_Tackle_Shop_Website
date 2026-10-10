@@ -1,0 +1,50 @@
+/* Giao diện khách hàng và phần đánh giá (dùng chung với style.css) */
+.shop-brand { color: #fff; text-decoration: none; }
+
+/* ----- Trang chi tiết sản phẩm ----- */
+.detail { display: grid; grid-template-columns: 360px 1fr; gap: 24px; background: #fff; padding: 20px; border-radius: 4px; }
+@media (max-width: 720px) { .detail { grid-template-columns: 1fr; } }
+.detail-main { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; }
+.no-image { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1 / 1;
+            border: 1px dashed #bbb; border-radius: 4px; color: #888; background: #fafafa; }
+.gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.gallery-thumb { width: 64px; height: 64px; object-fit: cover; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+.gallery-thumb:hover { border-color: #0b5ea8; }
+.detail-title { margin: 0 0 8px; font-size: 24px; }
+.price { font-size: 26px; color: #c62828; font-weight: bold; margin: 8px 0 12px; }
+.meta { margin: 4px 0; color: #444; }
+.desc { white-space: pre-wrap; }
+
+/* ----- Ngôi sao ----- */
+.stars .star { color: #ccc; }
+.stars .star.on { color: #f5a623; }
+.stars.big { font-size: 24px; }
+.rating-line { margin-bottom: 4px; }
+
+/* ----- Đánh giá ----- */
+.feedback-section { background: #fff; padding: 20px; border-radius: 4px; margin-top: 20px; }
+.feedback-section h2 { margin: 0 0 12px; font-size: 20px; }
+.rating-summary { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.rating-number { font-size: 32px; font-weight: bold; }
+.feedback-item { border-top: 1px solid #eee; padding: 12px 0; }
+.feedback-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: #555; font-size: 13px; }
+.feedback-text { margin: 6px 0; white-space: pre-wrap; }
+.reply { margin: 8px 0 8px 24px; padding: 8px 12px; background: #eef6ff; border-left: 3px solid #0b5ea8; border-radius: 4px; }
+.reply-label { font-weight: bold; font-size: 13px; color: #0b5ea8; }
+
+/* Chọn sao bằng cách bấm (thuần CSS): nhãn xếp ngược để tô các sao thấp hơn */
+.feedback-form { margin-bottom: 20px; }
+.feedback-form textarea { width: 100%; padding: 8px; border: 1px solid #bbb; border-radius: 4px; font: inherit; margin: 8px 0; }
+.star-input { display: inline-flex; flex-direction: row-reverse; position: relative; }
+.star-input input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.star-input label { font-size: 30px; color: #ccc; cursor: pointer; padding: 0 2px; }
+.star-input input:checked ~ label,
+.star-input label:hover,
+.star-input label:hover ~ label { color: #f5a623; }
+
+/* ----- Trang quản trị đánh giá ----- */
+.fb-card { background: #fff; padding: 16px; border-radius: 4px; margin-bottom: 12px; }
+.reply-form { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0; }
+.reply-form textarea { flex: 1; padding: 8px; border: 1px solid #bbb; border-radius: 4px; font: inherit; }
+.btn-small { padding: 3px 8px; font-size: 12px; margin-top: 4px; }
+.inline-check { display: flex; align-items: center; gap: 6px; font-size: 14px; }
