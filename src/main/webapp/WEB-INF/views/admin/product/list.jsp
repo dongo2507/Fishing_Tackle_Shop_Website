@@ -63,7 +63,7 @@
             <td>${p.id}</td>
             <td>
                 <c:if test="${not empty p.thumbnailUrl}">
-                    <img class="thumb" src="<c:out value='${p.thumbnailUrl}'/>" alt="">
+                    <img class="thumb" src="${ctx}<c:out value='${p.thumbnailUrl}'/>" alt="">
                 </c:if>
             </td>
             <td><c:out value="${p.name}"/></td>

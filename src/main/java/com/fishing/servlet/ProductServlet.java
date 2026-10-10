@@ -3,10 +3,13 @@ package com.fishing.servlet;
 import com.fishing.dao.BrandDAO;
 import com.fishing.dao.CategoryDAO;
 import com.fishing.dao.ProductDAO;
+import com.fishing.dao.ProductImageDAO;
 import com.fishing.enums.ProductStatus;
 import com.fishing.model.Brand;
 import com.fishing.model.Category;
 import com.fishing.model.Product;
+import com.fishing.model.ProductImage;
+import com.fishing.util.UploadUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,13 +19,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Controller quản lý sản phẩm (Admin).
  * GET : /admin/products                       -> danh sách (q, brandId, status để tìm/lọc)
  *       /admin/products?action=new            -> form thêm
- *       /admin/products?action=edit&id=1      -> form sửa
- * POST: action=save | delete | status         (xong thì redirect về danh sách)
+ *       /admin/products?action=edit&id=1      -> form sửa (kèm quản lý ảnh)
+ * POST: action=save | delete | status         (xong thì redirect)
+ * Ảnh đại diện và album do ProductImageServlet xử lý.
  */
 @WebServlet("/admin/products")
 public class ProductServlet extends HttpServlet {
@@ -33,6 +39,7 @@ public class ProductServlet extends HttpServlet {
     private static final int MAX_STOCK = 1_000_000;
 
     private final ProductDAO productDAO = new ProductDAO();
+    private final ProductImageDAO imageDAO = new ProductImageDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final BrandDAO brandDAO = new BrandDAO();
 
@@ -88,6 +95,9 @@ public class ProductServlet extends HttpServlet {
     private void showForm(HttpServletRequest req, HttpServletResponse resp, Product product)
             throws ServletException, IOException {
         req.setAttribute("product", product);
+        req.setAttribute("images", product.getId() == null
+                ? new ArrayList<ProductImage>()
+                : imageDAO.findByProduct(product.getId()));
         req.setAttribute("categories", categoryDAO.findAll(false));
         req.setAttribute("brands", brandDAO.findAll());
         req.setAttribute("statuses", ProductStatus.values());
@@ -110,10 +120,9 @@ public class ProductServlet extends HttpServlet {
             p = new Product();
         }
 
-        // Đọc dữ liệu từ form
+        // Đọc dữ liệu từ form (ảnh đại diện KHÔNG nằm trong form này nên không bị ghi đè)
         String name = trim(req.getParameter("name"));
         String description = emptyToNull(trim(req.getParameter("description")));
-        String thumbnailUrl = emptyToNull(trim(req.getParameter("thumbnailUrl")));
         BigDecimal price = parsePrice(req.getParameter("price"));
         Integer stock = parseStock(req.getParameter("stockQuantity"));
         ProductStatus status = parseStatus(req.getParameter("status"));
@@ -122,10 +131,9 @@ public class ProductServlet extends HttpServlet {
         Category category = categoryId == null ? null : categoryDAO.findById(categoryId);
         Brand brand = brandId == null ? null : brandDAO.findById(brandId);
 
-        // Gán vào đối tượng (để nếu lỗi thì form hiển thị lại đúng dữ liệu đã nhập)
+        // Gán vào đối tượng (nếu lỗi thì form hiển thị lại đúng dữ liệu đã nhập)
         p.setName(name);
         p.setDescription(description);
-        p.setThumbnailUrl(thumbnailUrl);
         p.setCategory(category);
         p.setBrand(brand);
         if (price != null) {
@@ -139,25 +147,43 @@ public class ProductServlet extends HttpServlet {
         }
 
         // Kiểm tra dữ liệu ở tầng Java (không dựa vào database)
-        String error = validate(name, description, thumbnailUrl, price, stock, status, category, brand);
+        String error = validate(name, description, price, stock, status, category, brand);
         if (error != null) {
             req.setAttribute("error", error);
             showForm(req, resp, p);
             return;
         }
 
-        productDAO.save(p);
-        flash(req, "success", id == null ? "Đã thêm sản phẩm." : "Đã cập nhật sản phẩm.");
-        redirectToList(req, resp);
+        Product saved = productDAO.save(p);
+        if (id == null) {
+            // Sản phẩm mới: chuyển thẳng sang trang sửa để thêm ảnh
+            flash(req, "success", "Đã thêm sản phẩm. Bạn có thể thêm ảnh đại diện và album bên dưới.");
+            resp.sendRedirect(req.getContextPath() + "/admin/products?action=edit&id=" + saved.getId());
+        } else {
+            flash(req, "success", "Đã cập nhật sản phẩm.");
+            redirectToList(req, resp);
+        }
     }
 
     private void delete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long id = parseId(req.getParameter("id"));
-        if (id == null || productDAO.findById(id) == null) {
+        Product existing = id == null ? null : productDAO.findById(id);
+        if (existing == null) {
             flash(req, "error", "Không tìm thấy sản phẩm.");
         } else {
+            // Gom danh sách file ảnh trước khi xóa dữ liệu
+            List<String> files = new ArrayList<>();
+            if (existing.getThumbnailUrl() != null) {
+                files.add(existing.getThumbnailUrl());
+            }
+            for (ProductImage img : imageDAO.findByProduct(id)) {
+                files.add(img.getImageUrl());
+            }
             try {
                 productDAO.delete(id);
+                for (String f : files) {
+                    UploadUtil.deleteQuietly(f);    // xóa file thật sau khi xóa DB thành công
+                }
                 flash(req, "success", "Đã xóa sản phẩm.");
             } catch (RuntimeException e) {
                 getServletContext().log("Không xóa được sản phẩm id=" + id, e);
@@ -182,9 +208,8 @@ public class ProductServlet extends HttpServlet {
 
     // ---------- Kiểm tra dữ liệu ----------
 
-    private String validate(String name, String description, String thumbnailUrl,
-                            BigDecimal price, Integer stock, ProductStatus status,
-                            Category category, Brand brand) {
+    private String validate(String name, String description, BigDecimal price, Integer stock,
+                            ProductStatus status, Category category, Brand brand) {
         if (name.isEmpty()) {
             return "Tên sản phẩm không được để trống.";
         }
@@ -208,15 +233,6 @@ public class ProductServlet extends HttpServlet {
         }
         if (brand == null) {
             return "Vui lòng chọn thương hiệu.";
-        }
-        if (thumbnailUrl != null) {
-            String u = thumbnailUrl.toLowerCase();
-            if (!(u.startsWith("http://") || u.startsWith("https://"))) {
-                return "Đường dẫn ảnh phải bắt đầu bằng http:// hoặc https://.";
-            }
-            if (thumbnailUrl.length() > 255) {
-                return "Đường dẫn ảnh tối đa 255 ký tự.";
-            }
         }
         if (description != null && description.length() > 5000) {
             return "Mô tả tối đa 5000 ký tự.";
