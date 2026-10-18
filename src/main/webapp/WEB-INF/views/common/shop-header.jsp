@@ -12,6 +12,9 @@
 </head>
 <body>
 <header class="topbar">
-    <a class="brand shop-brand" href="${ctx}/">Fishing Shop</a>
+    <a class="brand shop-brand" href="${ctx}/products">Fishing Shop</a>
+    <nav>
+        <a href="${ctx}/products">Sản phẩm</a>
+    </nav>
 </header>
 <main class="container">

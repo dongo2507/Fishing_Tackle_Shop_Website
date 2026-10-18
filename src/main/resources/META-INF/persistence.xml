@@ -6,15 +6,25 @@
 
     <persistence-unit name="fishingPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
         <class>com.fishing.model.Category</class>
         <class>com.fishing.model.Brand</class>
         <class>com.fishing.model.Product</class>
         <class>com.fishing.model.ProductImage</class>
         <class>com.fishing.model.Feedback</class>
         <class>com.fishing.model.SubFeedback</class>
+<<<<<<< HEAD
         <class>com.fishing.model.Customer</class>
         <class>com.fishing.model.Admin</class>
+=======
+        <!-- Giỏ hàng & Đơn hàng (An) -->
+        <class>com.fishing.model.Cart</class>
+        <class>com.fishing.model.CartItem</class>
+        <class>com.fishing.model.Order</class>
+        <class>com.fishing.model.LineItem</class>
+        <!-- Thanh toán & Vận chuyển (Lộc) -->
+        <class>com.fishing.model.Payment</class>
+        <class>com.fishing.model.Shipping</class>
+>>>>>>> ddbc47601cf1e9a7cfa7175373657ff453ceca8a
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

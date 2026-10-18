@@ -69,6 +69,23 @@
 
         <%-- Nút thêm vào giỏ hàng sẽ ghép với phần giỏ hàng của An --%>
 
+        <c:choose>
+            <c:when test="${product.status == 'ACTIVE' && product.stockQuantity > 0}">
+                <form method="post" action="${ctx}/cart" class="add-to-cart">
+                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="productId" value="${product.id}">
+                    <label for="qty">Số lượng</label>
+                    <input type="number" id="qty" name="quantity" value="1" min="1"
+                           max="${product.stockQuantity}" class="qty-input" required>
+                    <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                </form>
+            </c:when>
+            <c:otherwise>
+                <p class="muted">Sản phẩm hiện không thể đặt mua (${product.status.label}).</p>
+                <button type="button" class="btn" disabled>Thêm vào giỏ hàng</button>
+            </c:otherwise>
+        </c:choose>
+
         <h3>Mô tả</h3>
         <div class="desc"><c:out value="${product.description}" default="Chưa có mô tả."/></div>
     </div>

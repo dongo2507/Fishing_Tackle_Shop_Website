@@ -9,6 +9,8 @@
     <title><c:out value="${param.title}"/> - Fishing Shop</title>
     <link rel="stylesheet" href="${ctx}/css/style.css">
     <link rel="stylesheet" href="${ctx}/css/shop.css">
+    <link rel="stylesheet" href="${ctx}/css/order.css">
+    <link rel="stylesheet" href="${ctx}/css/payment.css">
     <script src="${ctx}/js/main.js" defer></script>
 </head>
 <body>
@@ -19,6 +21,9 @@
         <a href="${ctx}/admin/categories">Danh mục</a>
         <a href="${ctx}/admin/brands">Thương hiệu</a>
         <a href="${ctx}/admin/feedbacks">Đánh giá</a>
+        <a href="${ctx}/admin/orders">Đơn hàng</a>
+        <a href="${ctx}/admin/payments">Thanh toán</a>
+        <a href="${ctx}/admin/shippings">Vận chuyển</a>
     </nav>
 </header>
 <main class="container">

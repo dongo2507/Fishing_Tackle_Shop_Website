@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+package com.fishing.model;
+>>>>>>> ddbc47601cf1e9a7cfa7175373657ff453ceca8a
 
 package com.fishing.model;
 
