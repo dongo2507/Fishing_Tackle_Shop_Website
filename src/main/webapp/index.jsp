@@ -38,6 +38,7 @@
                 hidden>
                 <div class ="notification-dropdown-header">
                      <h3>Thông báo</h3>
+                     <p class =""
                 </div>
                 <div
                     class = "notification-list"

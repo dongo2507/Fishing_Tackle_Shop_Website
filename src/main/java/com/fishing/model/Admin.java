@@ -1,11 +1,26 @@
 
 package com.fishing.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "admin")
 public class Admin {
 
+    @Id
+    @Column(name = "id", length = 50)
     private String id;
+
+    @Column(name = "username", nullable = false, unique = true, length = 100)
     private String username;
+
+    @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
     public Admin() {
@@ -49,21 +64,5 @@ public class Admin {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean login() {
-        return false;
-    }
-
-    public void addProduct() {
-    }
-
-    public void updateProduct() {
-    }
-
-    public void deleteProduct() {
-    }
-
-    public void manageOrder() {
     }
 }

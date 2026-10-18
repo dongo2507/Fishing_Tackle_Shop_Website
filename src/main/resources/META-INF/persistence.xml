@@ -13,13 +13,15 @@
         <class>com.fishing.model.ProductImage</class>
         <class>com.fishing.model.Feedback</class>
         <class>com.fishing.model.SubFeedback</class>
+        <class>com.fishing.model.Customer</class>
+        <class>com.fishing.model.Admin</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/fishing_shop"/>
             <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password" value="250706"/>
+            <property name="jakarta.persistence.jdbc.password" value="Namnhat28022008"/>
 
             <!-- Connection Pooling: HikariCP -->
             <property name="hibernate.connection.provider_class"
