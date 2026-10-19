@@ -32,6 +32,11 @@
                 <button type ="submit">Đăng nhập</button>
             </form>
             <div class="register-link">
+                <a href="${pageContext.request.contextPath}/forgot-password.jsp">
+                        Quên mật khẩu?
+                </a>
+            </div>
+            <div class ="register-link">
                 Chưa có tài khoản
                 <a href ="${pageContext.request.contextPath}/register.jsp">
                     Đăng ký

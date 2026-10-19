@@ -12,38 +12,43 @@
         <class>com.fishing.model.ProductImage</class>
         <class>com.fishing.model.Feedback</class>
         <class>com.fishing.model.SubFeedback</class>
-<<<<<<< HEAD
+        <!-- Customer va Admin -->
         <class>com.fishing.model.Customer</class>
         <class>com.fishing.model.Admin</class>
-=======
-        <!-- Giỏ hàng & Đơn hàng (An) -->
+
+        <!-- Gio hang va Don hang -->
         <class>com.fishing.model.Cart</class>
         <class>com.fishing.model.CartItem</class>
         <class>com.fishing.model.Order</class>
         <class>com.fishing.model.LineItem</class>
-        <!-- Thanh toán & Vận chuyển (Lộc) -->
+
+        <!-- Thanh toan va Van chuyen -->
         <class>com.fishing.model.Payment</class>
         <class>com.fishing.model.Shipping</class>
->>>>>>> ddbc47601cf1e9a7cfa7175373657ff453ceca8a
+
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/fishing_shop"/>
-            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password" value="Namnhat28022008"/>
+            <property name="jakarta.persistence.jdbc.driver"
+                      value="org.postgresql.Driver"/>
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:postgresql://localhost:5432/fishing_shop"/>
+            <property name="jakarta.persistence.jdbc.user"
+                      value="postgres"/>
+            <property name="jakarta.persistence.jdbc.password"
+                      value="Namnhat28022008"/>
 
-            <!-- Connection Pooling: HikariCP -->
             <property name="hibernate.connection.provider_class"
                       value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
-            <property name="hibernate.hikari.poolName" value="FishingShopPool"/>
+            <property name="hibernate.hikari.poolName"
+                      value="FishingShopPool"/>
             <property name="hibernate.hikari.maximumPoolSize" value="10"/>
             <property name="hibernate.hikari.minimumIdle" value="2"/>
             <property name="hibernate.hikari.connectionTimeout" value="30000"/>
             <property name="hibernate.hikari.idleTimeout" value="600000"/>
             <property name="hibernate.hikari.maxLifetime" value="1800000"/>
-
-            <!-- Tự tạo/cập nhật bảng từ Entity -->
+            
+            
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>

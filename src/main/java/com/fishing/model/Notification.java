@@ -1,10 +1,6 @@
 
 package com.fishing.model;
-
-<<<<<<< HEAD
-=======
 import com.fishing.enums.NotificationType;
->>>>>>> ddbc47601cf1e9a7cfa7175373657ff453ceca8a
 import java.util.Date;
 
 import com.fishing.enums.NotificationType;

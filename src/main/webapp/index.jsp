@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -39,7 +38,6 @@
                 hidden>
                 <div class ="notification-dropdown-header">
                      <h3>Thông báo</h3>
-                     <p class =""
                 </div>
                 <div
                     class = "notification-list"
@@ -62,9 +60,3 @@
             defer></script>
 </body>
 </html>
-=======
-<%
-    // Trang chủ: chuyển tới danh sách sản phẩm cho khách
-    response.sendRedirect(request.getContextPath() + "/products");
-%>
->>>>>>> ddbc47601cf1e9a7cfa7175373657ff453ceca8a
