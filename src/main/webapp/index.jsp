@@ -17,7 +17,11 @@
         <a href="${pageContext.request.contextPath}/" class="logo">
             Fishing Tackle Shop
         </a>
-
+        <!-- Nút đăng nhập -->
+        <a href="${pageContext.request.contextPath}/login.jsp"
+           class="login-button">
+            Đăng nhập
+        </a>
         <!-- Chuông thông báo -->
         <div class="notification-wrapper">
             <button type="button"

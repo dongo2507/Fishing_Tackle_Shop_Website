@@ -1,4 +1,18 @@
+.login-button {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-right: 12px;
+    color: #ffffff;
+    background-color: #2563eb;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
 
+.login-button:hover {
+    background-color: #1d4ed8;
+}
 .navbar {
     display: flex;
     align-items: center;
