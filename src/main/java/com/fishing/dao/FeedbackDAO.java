@@ -122,7 +122,7 @@ public class FeedbackDAO {
 
     // ---------- Câu trả lời (SubFeedback) ----------
 
-    public SubFeedback addReply(Long feedbackId, Long adminId, String content) {
+    public SubFeedback addReply(Long feedbackId, String adminId, String content) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             em.getTransaction().begin();

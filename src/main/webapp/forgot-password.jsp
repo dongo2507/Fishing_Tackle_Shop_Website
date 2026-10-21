@@ -1,4 +1,3 @@
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -12,15 +11,12 @@
 <body>
     <div class="container">
         <h2>Quên mật khẩu?</h2>
-
         <% if (request.getAttribute("message") != null) { %>
             <p class="message"><%= request.getAttribute("message") %></p>
         <% } %>
-
         <% if (request.getAttribute("error") != null) { %>
             <p class="error"><%= request.getAttribute("error") %></p>
         <% } %>
-
         <p>Nhập địa chỉ email đã đăng ký. Hướng dẫn đặt lại mật khẩu sẽ được gửi qua email.</p>
 
         <form action="${pageContext.request.contextPath}/forgot-password" method="post">
@@ -29,7 +25,6 @@
                    placeholder="Nhập email của bạn" required>
             <button type="submit">Gửi mã OTP</button>
         </form>
-
         <div class="back">
             <a href="${pageContext.request.contextPath}/login.jsp">Quay lại đăng nhập</a>
         </div>

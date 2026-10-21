@@ -10,12 +10,6 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-/**
- * Lưu và xóa file ảnh upload.
- * Ảnh được lưu NGOÀI thư mục webapp (mặc định: <thư mục người dùng>/fishingshop-uploads)
- * để không bị mất khi build lại hoặc deploy lại Tomcat.
- * Đổi thư mục bằng tham số JVM: -Dfishing.upload.dir=D:/uploads
- */
 public final class UploadUtil {
 
     public static final long MAX_SIZE = 5L * 1024 * 1024;   // 5MB mỗi ảnh
@@ -39,11 +33,6 @@ public final class UploadUtil {
 
     private UploadUtil() {}
 
-    /**
-     * Kiểm tra và lưu một ảnh.
-     * @return đường dẫn lưu vào database (ví dụ /uploads/xxxx.jpg), hoặc null nếu không chọn file
-     * @throws IllegalArgumentException nếu ảnh quá lớn hoặc không phải ảnh hợp lệ
-     */
     public static String saveImage(Part part) throws IOException {
         if (part == null || part.getSize() == 0) {
             return null;
@@ -51,8 +40,6 @@ public final class UploadUtil {
         if (part.getSize() > MAX_SIZE) {
             throw new IllegalArgumentException("Ảnh vượt quá 5MB.");
         }
-
-        // Xác định loại ảnh theo NỘI DUNG file (không tin tên file hay Content-Type do người dùng gửi)
         String ext;
         try (InputStream in = part.getInputStream()) {
             ext = detectExtension(in.readNBytes(12));
@@ -68,7 +55,6 @@ public final class UploadUtil {
         return URL_PREFIX + fileName;
     }
 
-    /** Xóa file theo đường dẫn đã lưu trong database. Bỏ qua mọi lỗi và mọi đường dẫn lạ. */
     public static void deleteQuietly(String url) {
         if (url == null || !url.startsWith(URL_PREFIX)) {
             return;

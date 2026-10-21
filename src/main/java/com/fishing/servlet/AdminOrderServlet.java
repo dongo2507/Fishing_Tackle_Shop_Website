@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Quản lý đơn hàng (Admin).
+ * Quản lý đơn hàng (Admin). 
  * GET : /admin/orders                     -> danh sách (status, q để lọc/tìm)
  *       /admin/orders?id=1                -> chi tiết đơn
  * POST: action=next    id                 -> chuyển sang trạng thái kế tiếp

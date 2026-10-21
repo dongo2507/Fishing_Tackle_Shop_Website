@@ -1,4 +1,3 @@
-
 package com.fishing.model;
 
 import jakarta.persistence.Column;

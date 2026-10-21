@@ -1,135 +1,85 @@
-
-const notifications = [
-    {
-        id: 1,
-        type: "ORDER_CREATED",
-        title: "Đặt hàng thành công",
-        message: "Đơn hàng #ORD1004 của bạn đã được tạo thành công.",
-        time: "2 phút trước",
-        icon: "🛒",
-        unread: true
-    },
-    {
-        id: 2,
-        type: "SHIPPING_UPDATE",
-        title: "Cập nhật vận chuyển",
-        message: "Đơn hàng #ORD1002 đang được giao đến bạn.",
-        time: "15 phút trước",
-        icon: "🚚",
-        unread: true
-    },
-    {
-        id: 3,
-        type: "PAYMENT_SUCCESS",
-        title: "Thanh toán thành công",
-        message: "Thanh toán đơn hàng #ORD1001 đã hoàn tất.",
-        time: "1 giờ trước",
-        icon: "💳",
-        unread: true
-    },
-    {
-        id: 4,
-        type: "ORDER_CANCELLED",
-        title: "Đơn hàng đã bị hủy",
-        message: "Đơn hàng #ORD0998 đã được hủy.",
-        time: "Hôm qua",
-        icon: "❌",
-        unread: false
-    }
-];
-
-// Chuyển nội dung thành text an toàn trước khi đưa vào HTML.
-function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, function (char) {
-        const entities = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        };
-        return entities[char];
-    });
-}
-
-function renderNotificationItem(item, compact = false) {
-    return `
-        <article class="notification-item ${item.unread ? "is-unread" : ""}">
-            <div class="notification-icon">${escapeHTML(item.icon)}</div>
-
-            <div class="notification-content">
-                <div class="notification-item-heading">
-                    <strong>${escapeHTML(item.title)}</strong>
-                    ${item.unread ? '<span class="unread-dot"></span>' : ""}
-                </div>
-
-                <p>${escapeHTML(item.message)}</p>
-                <span class="notification-time">${escapeHTML(item.time)}</span>
-
-                ${compact ? "" : `
-                    <span class="notification-type">
-                        ${escapeHTML(item.type)}
-                    </span>
-                `}
-            </div>
-        </article>
-    `;
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-    const bellButton = document.getElementById("notificationBell");
+    const bell = document.getElementById("notificationBell");
     const dropdown = document.getElementById("notificationDropdown");
+    const badge = document.getElementById("notificationBadge");
     const latestList = document.getElementById("latestNotifications");
     const allList = document.getElementById("allNotifications");
-    const badge = document.getElementById("notificationBadge");
 
-    // Hiển thị số thông báo chưa đọc trên chuông.
-    const unreadCount = notifications.filter(item => item.unread).length;
+    const script = document.querySelector('script[src*="notification.js"]');
+    const contextPath = script
+        ? new URL(script.src).pathname.replace(/\/js\/notification\.js$/, "")
+        : "";
 
-    if (badge) {
-        badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
-        badge.hidden = unreadCount === 0;
+    // Lấy số thông báo chưa đọc.
+    function loadCount() {
+        fetch(contextPath + "/notifications?action=count")
+            .then(response => {
+                if (!response.ok) throw new Error();
+                return response.json();
+            })
+            .then(data => {
+                badge.textContent = data.count > 9 ? "9+" : data.count;
+                badge.hidden = data.count === 0;
+            })
+            .catch(() => badge.hidden = true);
     }
 
-    // Dropdown trên trang chủ: tối đa 3 thông báo mới nhất.
-    if (latestList) {
-        latestList.innerHTML = notifications
-            .slice(0, 3)
-            .map(item => renderNotificationItem(item, true))
-            .join("");
+    // Hiển thị danh sách thông báo.
+    function loadNotifications(list, action) {
+        if (!list) return;
+
+        fetch(contextPath + "/notifications?action=" + action)
+            .then(response => {
+                if (!response.ok) throw new Error();
+                return response.json();
+            })
+            .then(data => {
+                if (data.length === 0) {
+                    list.innerHTML = "<p>Chưa có thông báo.</p>";
+                    return;
+                }
+
+                list.innerHTML = data.map(n => `
+                    <article class="notification-item ${n.isRead ? "" : "is-unread"}"
+                             data-id="${n.id}">
+                        <strong>${n.title}</strong>
+                        <p>${n.content}</p>
+                    </article>
+                `).join("");
+            })
+            .catch(() => {
+                list.innerHTML = "<p>Không thể tải thông báo.</p>";
+            });
     }
 
-    // Trang riêng: hiển thị tất cả 4 loại thông báo mẫu.
-    if (allList) {
-        allList.innerHTML = notifications
-            .map(item => renderNotificationItem(item, false))
-            .join("");
+    // Tải lại thông báo và số lượng.
+    function refresh() {
+        loadCount();
+        loadNotifications(latestList, "latest");
+        loadNotifications(allList, "all");
     }
 
-    // Mở hoặc đóng dropdown khi nhấn chuông.
-    if (bellButton && dropdown) {
-        bellButton.addEventListener("click", function (event) {
-            event.stopPropagation();
+    // Bấm vào thông báo để đánh dấu đã đọc.
+    document.addEventListener("click", function (event) {
+        const item = event.target.closest(".notification-item");
+        if (!item) return;
 
-            const isOpen = dropdown.classList.toggle("is-open");
-            bellButton.setAttribute("aria-expanded", String(isOpen));
+        fetch(contextPath + "/notifications?id=" + encodeURIComponent(item.dataset.id), {
+            method: "POST"
+        }).then(() => refresh());
+    });
+
+    // Mở hoặc đóng danh sách thông báo.
+    if (bell && dropdown) {
+        bell.addEventListener("click", function () {
+            dropdown.classList.toggle("is-open");
+            bell.setAttribute(
+                "aria-expanded",
+                dropdown.classList.contains("is-open")
+            );
+            refresh();
         });
-
-        // Nhấn bên ngoài khung sẽ đóng dropdown.
-        document.addEventListener("click", function (event) {
-            if (!dropdown.contains(event.target) &&
-                !bellButton.contains(event.target)) {
-                dropdown.classList.remove("is-open");
-                bellButton.setAttribute("aria-expanded", "false");
-            }
-        });
-
-        // Nhấn Escape để đóng dropdown.
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-                dropdown.classList.remove("is-open");
-                bellButton.setAttribute("aria-expanded", "false");
-            }
-        });
     }
+
+    refresh();
 });

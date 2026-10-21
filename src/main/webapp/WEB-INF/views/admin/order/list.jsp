@@ -64,6 +64,7 @@
                 <c:if test="${not empty o.status.next()}">
                     <form method="post" action="${ctx}/admin/orders" class="inline">
                         <input type="hidden" name="action" value="next">
+                        <input type="hidden" name="q" value="<c:out value='${param.q}'/>">
                         <input type="hidden" name="id" value="${o.id}">
                         <input type="hidden" name="filterStatus" value="<c:out value='${param.status}'/>">
                         <button type="submit" class="btn btn-primary">→ ${o.status.next().label}</button>

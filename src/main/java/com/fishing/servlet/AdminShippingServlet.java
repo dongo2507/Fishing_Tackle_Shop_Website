@@ -16,13 +16,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 
-/**
- * Quản lý vận chuyển (Admin).
- * GET : /admin/shippings                   -> danh sách (status, q = mã vận đơn / mã đơn)
- * POST: action=save  orderId, carrierName, trackingNumber, expectedDate (yyyy-MM-dd)
- *       -> cập nhật thông tin vận chuyển, quay về trang chi tiết đơn
- * Trạng thái vận chuyển tự đổi theo trạng thái đơn (xem OrderDAO.advanceStatus).
- */
 @WebServlet("/admin/shippings")
 public class AdminShippingServlet extends HttpServlet {
 

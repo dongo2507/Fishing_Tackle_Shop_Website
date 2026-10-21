@@ -18,7 +18,7 @@ public class SubFeedback {
 
     // Tạm dùng số, sau này đổi thành @ManyToOne Admin (phần của Dũng)
     @Column(name = "admin_id")
-    private Long adminId;
+    private String adminId;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -35,8 +35,8 @@ public class SubFeedback {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    public Long getAdminId() { return adminId; }
-    public void setAdminId(Long adminId) { this.adminId = adminId; }
+    public String getAdminId() { return adminId; }
+    public void setAdminId(String adminId) { this.adminId = adminId; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

@@ -1,10 +1,4 @@
 package com.fishing.enums;
-
-/**
- * Trạng thái đơn hàng.
- * Luồng bình thường: PENDING -> CONFIRMED -> SHIPPING -> SUCCESS
- * Có thể hủy (CANCELLED) khi đơn chưa giao (PENDING hoặc CONFIRMED).
- */
 public enum OrderStatus {
     PENDING("Chờ xác nhận"),
     CONFIRMED("Đã xác nhận"),
@@ -32,11 +26,6 @@ public enum OrderStatus {
     public boolean isCancellable() {
         return this == PENDING || this == CONFIRMED;
     }
-
-    /**
-     * Trạng thái kế tiếp hợp lệ khi Admin bấm "chuyển trạng thái".
-     * Hủy đơn đi đường riêng (cancelOrder) vì còn phải hoàn kho.
-     */
     public OrderStatus next() {
         switch (this) {
             case PENDING:   return CONFIRMED;

@@ -34,12 +34,14 @@ protected void doPost(HttpServletRequest request,
         throws ServletException, IOException {
 
     request.setCharacterEncoding("UTF-8");
-    System.out.println(
+    
+    // TÀI KHOẢN ADMIN
+    /*System.out.println(
     org.mindrot.jbcrypt.BCrypt.hashpw(
         "Admin@12345",
         org.mindrot.jbcrypt.BCrypt.gensalt(10)
-    )
-);
+        )
+    );*/
     String username = request.getParameter("username");
     String password = request.getParameter("password");
 
@@ -53,7 +55,6 @@ protected void doPost(HttpServletRequest request,
     }
 
     username = username.trim();
-
     // 1. Kiểm tra tài khoản Admin trước
     EntityManager em = JPAUtil.createEntityManager();
 
@@ -72,7 +73,7 @@ protected void doPost(HttpServletRequest request,
             session.setAttribute("admin", admin);
 
             response.sendRedirect(
-                    request.getContextPath() + "/admin-demo.jsp");
+                    request.getContextPath() + "/admin/orders");
             return;
         }
 

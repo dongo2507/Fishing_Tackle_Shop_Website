@@ -20,16 +20,8 @@ import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-/**
- * Đơn hàng: đặt hàng từ giỏ, xem, chuyển trạng thái, hủy đơn.
- *
- * Đặt hàng và hủy đơn đều làm trong MỘT transaction và khóa dòng sản phẩm
- * (SELECT ... FOR UPDATE) để 2 người mua cùng lúc không làm tồn kho bị âm.
- */
 public class OrderDAO {
 
-    // Phần của Lộc: thanh toán & vận chuyển được cập nhật trong cùng transaction với đơn hàng
     private final PaymentDAO paymentDAO = new PaymentDAO();
     private final ShippingDAO shippingDAO = new ShippingDAO();
 
@@ -42,7 +34,6 @@ public class OrderDAO {
         public String note;
         public PaymentMethod paymentMethod = PaymentMethod.COD;
 
-        // Getter để JSP đọc được: ${info.receiverName}
         public String getReceiverName() { return receiverName; }
         public String getReceiverPhone() { return receiverPhone; }
         public String getShippingAddress() { return shippingAddress; }
@@ -50,18 +41,6 @@ public class OrderDAO {
         public PaymentMethod getPaymentMethod() { return paymentMethod; }
     }
 
-    // =====================================================================
-    //  ĐẶT HÀNG: Giỏ hàng -> Đơn hàng
-    // =====================================================================
-
-    /**
-     * Chuyển toàn bộ giỏ hàng thành 1 đơn hàng mới:
-     *  1. Khóa giỏ hàng (chống bấm "Đặt hàng" 2 lần).
-     *  2. Khóa các sản phẩm trong giỏ, kiểm tra trạng thái + tồn kho.
-     *  3. Tạo LineItem với giá chốt tại thời điểm mua, trừ tồn kho.
-     *  4. Lưu đơn, xóa giỏ.
-     * Bất kỳ bước nào lỗi thì rollback, không có gì thay đổi.
-     */
     public Order placeOrder(Long customerId, ShippingInfo info) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
@@ -219,8 +198,6 @@ public class OrderDAO {
             em.close();
         }
     }
-
-    /** Đếm số đơn theo từng trạng thái (cho các tab lọc của Admin). */
     public Map<OrderStatus, Long> countByStatus() {
         EntityManager em = JPAUtil.createEntityManager();
         try {
@@ -240,11 +217,6 @@ public class OrderDAO {
         }
     }
 
-    // =====================================================================
-    //  ĐỔI TRẠNG THÁI & HỦY ĐƠN
-    // =====================================================================
-
-    /** Admin chuyển đơn sang bước kế tiếp (PENDING -> CONFIRMED -> SHIPPING -> SUCCESS). */
     public OrderStatus advanceStatus(Long orderId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
@@ -278,12 +250,6 @@ public class OrderDAO {
             em.close();
         }
     }
-
-    /**
-     * Hủy đơn và HOÀN KHO trong cùng 1 transaction.
-     * @param customerId null = Admin hủy (hủy được PENDING, CONFIRMED);
-     *                   khác null = khách tự hủy (chỉ hủy được đơn của mình khi còn PENDING).
-     */
     public void cancelOrder(Long orderId, Long customerId, String reason) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
@@ -300,8 +266,6 @@ public class OrderDAO {
                 throw new BusinessException("Đơn " + o.getCode() + " đang ở trạng thái \""
                         + o.getStatus().getLabel() + "\", không thể hủy.");
             }
-
-            // Hoàn trả số lượng về kho (khóa sản phẩm trước khi cộng)
             List<Long> productIds = em.createQuery(
                             "SELECT li.product.id FROM LineItem li WHERE li.order.id = :oid", Long.class)
                     .setParameter("oid", orderId)
@@ -314,7 +278,6 @@ public class OrderDAO {
             for (LineItem li : o.getItems()) {
                 Product p = li.getProduct();
                 p.setStockQuantity(p.getStockQuantity() + li.getQuantity());
-                // Hết hàng do đơn này thì mở bán lại; ẨN / NGỪNG KINH DOANH thì giữ nguyên
                 if (p.getStatus() == ProductStatus.OUT_OF_STOCK && p.getStockQuantity() > 0) {
                     p.setStatus(ProductStatus.ACTIVE);
                 }
@@ -336,10 +299,6 @@ public class OrderDAO {
             em.close();
         }
     }
-
-    // ---------- Hàm hỗ trợ ----------
-
-    /** "DH000012", "dh12", "#12", "12" -> 12; không phải mã đơn thì null. */
     private Long parseOrderCode(String s) {
         String t = s.trim().toUpperCase();
         if (t.startsWith("#")) {

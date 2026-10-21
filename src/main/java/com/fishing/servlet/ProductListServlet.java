@@ -16,10 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Trang danh sách sản phẩm cho khách hàng.
- * GET /products?q=...&categoryId=..&brandId=..&sort=newest|price_asc|price_desc&page=1
- */
 @WebServlet("/products")
 public class ProductListServlet extends HttpServlet {
 
@@ -67,7 +63,6 @@ public class ProductListServlet extends HttpServlet {
         req.getRequestDispatcher(VIEW).forward(req, resp);
     }
 
-    /** Dựng chuỗi tham số từ các giá trị đã phân tích (đã mã hóa URL) để làm liên kết chuyển trang. */
     private String buildQueryString(String q, Long brandId, Long categoryId, String sort) {
         StringBuilder sb = new StringBuilder();
         if (!q.isEmpty()) {

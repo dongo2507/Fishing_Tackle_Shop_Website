@@ -11,12 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-/**
- * Admin xem đánh giá và trả lời (SubFeedback).
- * GET : /admin/feedbacks?productId=1&unanswered=true
- * POST: action=reply (feedbackId, content) | deleteReply (subId) | delete (feedbackId)
- *       Các trường filterProductId, filterUnanswered để giữ bộ lọc sau khi thao tác.
- */
 @WebServlet("/admin/feedbacks")
 public class AdminFeedbackServlet extends HttpServlet {
 

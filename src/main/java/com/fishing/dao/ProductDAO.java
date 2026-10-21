@@ -12,10 +12,6 @@ import java.util.List;
 
 public class ProductDAO {
 
-    /**
-     * Tìm kiếm + lọc. Tham số nào null/rỗng thì bỏ qua điều kiện đó.
-     * JOIN FETCH category và brand để JSP đọc được sau khi EntityManager đã đóng.
-     */
     public List<Product> search(String keyword, Long brandId, ProductStatus status) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
@@ -67,13 +63,11 @@ public class ProductDAO {
         }
     }
 
-    /** id == null: thêm mới (persist); ngược lại: cập nhật (merge). */
     public Product save(Product product) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             em.getTransaction().begin();
 
-            // Chỉ cần tham chiếu tới category/brand (không cần nạp lại dữ liệu)
             if (product.getCategory() != null) {
                 product.setCategory(em.getReference(Category.class, product.getCategory().getId()));
             }
@@ -99,8 +93,6 @@ public class ProductDAO {
             em.close();
         }
     }
-
-    /** Xóa sản phẩm (cascade xóa luôn ảnh, đánh giá). Ném lỗi nếu bị bảng khác tham chiếu. */
     public void delete(Long id) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
@@ -119,8 +111,6 @@ public class ProductDAO {
             em.close();
         }
     }
-
-    /** Đổi trạng thái: entity đang được quản lý nên chỉ cần set, Hibernate tự UPDATE khi commit. */
     public void updateStatus(Long id, ProductStatus status) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
@@ -140,7 +130,6 @@ public class ProductDAO {
         }
     }
 
-    /** Escape ký tự đặc biệt của LIKE để người dùng gõ % hoặc _ vẫn tìm đúng nghĩa đen. */
     private String escapeLike(String s) {
         return s.replace("!", "!!").replace("%", "!%").replace("_", "!_");
     }

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/** Trả ảnh đã upload (lưu ngoài webapp) cho trình duyệt: /uploads/ten-file.jpg */
 @WebServlet("/uploads/*")
 public class UploadServlet extends HttpServlet {
 

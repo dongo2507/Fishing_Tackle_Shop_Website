@@ -21,15 +21,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Controller quản lý sản phẩm (Admin).
- * GET : /admin/products                       -> danh sách (q, brandId, status để tìm/lọc)
- *       /admin/products?action=new            -> form thêm
- *       /admin/products?action=edit&id=1      -> form sửa (kèm quản lý ảnh)
- * POST: action=save | delete | status         (xong thì redirect)
- * Ảnh đại diện và album do ProductImageServlet xử lý.
- */
 @WebServlet("/admin/products")
 public class ProductServlet extends HttpServlet {
 
@@ -153,7 +144,6 @@ public class ProductServlet extends HttpServlet {
             showForm(req, resp, p);
             return;
         }
-
         Product saved = productDAO.save(p);
         if (id == null) {
             // Sản phẩm mới: chuyển thẳng sang trang sửa để thêm ảnh
@@ -164,7 +154,6 @@ public class ProductServlet extends HttpServlet {
             redirectToList(req, resp);
         }
     }
-
     private void delete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long id = parseId(req.getParameter("id"));
         Product existing = id == null ? null : productDAO.findById(id);
@@ -240,8 +229,6 @@ public class ProductServlet extends HttpServlet {
         return null;
     }
 
-    // ---------- Hàm hỗ trợ ----------
-
     private Long parseId(String s) {
         if (s == null || s.isBlank()) {
             return null;
@@ -252,7 +239,6 @@ public class ProductServlet extends HttpServlet {
             return null;
         }
     }
-
     private BigDecimal parsePrice(String s) {
         if (s == null || s.isBlank()) {
             return null;
@@ -264,7 +250,6 @@ public class ProductServlet extends HttpServlet {
             return null;
         }
     }
-
     private Integer parseStock(String s) {
         if (s == null || s.isBlank()) {
             return null;

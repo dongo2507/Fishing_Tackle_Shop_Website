@@ -1,4 +1,3 @@
-
 package com.fishing.util;
 
 import jakarta.persistence.EntityManager;

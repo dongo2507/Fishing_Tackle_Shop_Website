@@ -1,37 +1,57 @@
-
 package com.fishing.model;
+
 import com.fishing.enums.NotificationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+
 import java.util.Date;
 
-import com.fishing.enums.NotificationType;
-
+@Entity
+@Table(name = "notification")
 public class Notification {
 
+    @Id
+    @Column(name = "notification_id", length = 50)
     private String notificationId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 30)
     private NotificationType type;
+
+    @Column(name = "title", nullable = false, length = 200)
     private String title;
+
+    @Column(name = "content", nullable = false, length = 1000)
     private String content;
-    private boolean isRead;
+
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "sent_at", nullable = false)
     private Date sentAt;
+
+    @Column(name = "sender_id", length = 50)
     private String senderId;
+
+    @Column(name = "recipient_id", nullable = false, length = 50)
     private String recipientId;
 
     public Notification() {
     }
 
-    public Notification(String notificationId,
-                        NotificationType type,
-                        String title, String content,
-                        boolean isRead, Date sentAt,
-                        String senderId, String recipientId) {
-        this.notificationId = notificationId;
-        this.type = type;
-        this.title = title;
-        this.content = content;
-        this.isRead = isRead;
-        this.sentAt = sentAt;
-        this.senderId = senderId;
-        this.recipientId = recipientId;
+    @PrePersist
+    public void beforeSave() {
+        if (sentAt == null) {
+            sentAt = new Date();
+        }
     }
 
     public String getNotificationId() {
