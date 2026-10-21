@@ -12,9 +12,11 @@
         <class>com.fishing.model.ProductImage</class>
         <class>com.fishing.model.Feedback</class>
         <class>com.fishing.model.SubFeedback</class>
-        <!-- Customer va Admin -->
+        
+        <!-- Customer, Address va Admin -->
         <class>com.fishing.model.Customer</class>
         <class>com.fishing.model.Admin</class>
+        <class>com.fishing.model.Address</class>
 
         <!-- Gio hang va Don hang -->
         <class>com.fishing.model.Cart</class>
@@ -25,7 +27,7 @@
         <!-- Thanh toan va Van chuyen -->
         <class>com.fishing.model.Payment</class>
         <class>com.fishing.model.Shipping</class>
-
+        
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
@@ -47,7 +49,6 @@
             <property name="hibernate.hikari.connectionTimeout" value="30000"/>
             <property name="hibernate.hikari.idleTimeout" value="600000"/>
             <property name="hibernate.hikari.maxLifetime" value="1800000"/>
-            
             
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>

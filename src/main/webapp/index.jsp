@@ -17,11 +17,26 @@
         <a href="${pageContext.request.contextPath}/" class="logo">
             Fishing Tackle Shop
         </a>
-        <!-- Nút đăng nhập -->
-        <a href="${pageContext.request.contextPath}/login.jsp"
-           class="login-button">
-            Đăng nhập
-        </a>
+        <% 
+            com.fishing.model.Customer customer = (com.fishing.model.Customer) session.getAttribute("customer");
+        %>
+        <!-- ACCOUNT -->
+        <div class ="account-wrapper">
+            <% if (customer != null) { %>
+            <span class ="account-name">
+                Xin chào, <%= customer.getFullName() %>
+            </span>
+            <a href="${pageContext.request.contextPath}/addresses"
+               class ="login-button">
+                Địa chỉ giao hàng
+            </a>
+               <% } else { %>
+               <a href="${pageContext.request.contextPath}/login.jsp"
+                  class ="login-button">
+                   Đăng nhập
+               </a>
+            <% } %>      
+        </div>
         <!-- Chuông thông báo -->
         <div class="notification-wrapper">
             <button type="button"

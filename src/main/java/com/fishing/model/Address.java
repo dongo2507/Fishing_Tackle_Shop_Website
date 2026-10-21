@@ -1,14 +1,47 @@
 
 package com.fishing.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "address")
 public class Address {
 
+    @Id
+    @Column(name = "address_id", length = 50)
     private String id;
+
+    @Column(name = "street", nullable = false, length = 255)
     private String street;
+    
+    @Column (name = "receiver_name", nullable = false, length = 100)
+    private String receiverName;
+    
+    @Column(name = "receiver_phone", nullable = false, length =15)
+    private String receiverPhone;
+    
+    @Column (name= "address_label", length = 30)
+    private String addressLabel;
+    @Column(name = "ward", nullable = false, length = 100)
     private String ward;
+
+    @Column(name = "district", nullable = false, length = 100)
     private String district;
+
+    @Column(name = "city", nullable = false, length = 100)
     private String city;
+
+    @Column(name = "is_default", nullable = false)
     private boolean isDefault;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     public Address() {
@@ -80,5 +113,28 @@ public class Address {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+    public String getReceiverName() {
+    return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getAddressLabel() {
+        return addressLabel;
+    }
+
+    public void setAddressLabel(String addressLabel) {
+        this.addressLabel = addressLabel;
     }
 }
