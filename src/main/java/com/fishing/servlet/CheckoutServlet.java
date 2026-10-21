@@ -21,7 +21,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
+import com.fishing.dao.NotificationDAO;
+import com.fishing.enums.NotificationType;
+import com.fishing.model.Notification;
 /**
  * Đặt hàng.
  * GET : /checkout -> form thông tin nhận hàng + tóm tắt giỏ
@@ -38,7 +40,8 @@ public class CheckoutServlet extends HttpServlet {
 
     private final CartDAO cartDAO = new CartDAO();
     private final OrderDAO orderDAO = new OrderDAO();
-
+    
+    private final NotificationDAO notificationDAO = new NotificationDAO();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -56,7 +59,7 @@ public class CheckoutServlet extends HttpServlet {
         info.shippingAddress = WebUtil.trim(req.getParameter("shippingAddress"));
         info.note = WebUtil.emptyToNull(WebUtil.trim(req.getParameter("note")));
         info.paymentMethod = parsePaymentMethod(req.getParameter("paymentMethod"));
-
+         
         String error = validate(info);
         if (error != null) {
             req.setAttribute("error", error);
@@ -66,6 +69,13 @@ public class CheckoutServlet extends HttpServlet {
 
         try {
             Order order = orderDAO.placeOrder(TempAuth.getCustomerId(req), info);
+            Notification notification = new Notification();
+            notification.setType(NotificationType.ORDER_CREATED);
+            notification.setTitle("Đặt hàng thành công");
+            notification.setContent( "Đơn hàng " + order.getCode()+ " của bạn đã được tạo thành công.");
+            notification.setRecipientId(String.valueOf(TempAuth.getCustomerId(req)));
+            notificationDAO.save(notification);
+
             req.getSession().setAttribute(LAST_INFO, info);
             CartCountFilter.refresh(req, cartDAO);
             WebUtil.flash(req, "success", "Đặt hàng thành công! Mã đơn của bạn là " + order.getCode() + ".");
