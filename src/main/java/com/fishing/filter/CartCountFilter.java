@@ -18,7 +18,7 @@ import java.io.IOException;
  * để thanh menu hiện "Giỏ hàng (3)". Chỉ đọc DB 1 lần mỗi phiên;
  * sau đó CartServlet / CheckoutServlet tự cập nhật khi giỏ thay đổi.
  */
-@WebFilter(urlPatterns = {"/product", "/cart", "/checkout", "/orders"})
+@WebFilter(urlPatterns = {"/products", "/product", "/cart", "/checkout", "/orders"})
 public class CartCountFilter implements Filter {
 
     public static final String ATTR = "cartCount";

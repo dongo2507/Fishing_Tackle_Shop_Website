@@ -1,10 +1,13 @@
 package com.fishing.servlet;
 
+import com.fishing.dao.AddressDAO;
 import com.fishing.dao.CartDAO;
 import com.fishing.dao.OrderDAO;
 import com.fishing.enums.PaymentMethod;
 import com.fishing.filter.CartCountFilter;
+import com.fishing.model.Address;
 import com.fishing.model.Cart;
+import com.fishing.model.Customer;
 import com.fishing.model.Order;
 import com.fishing.util.BusinessException;
 import com.fishing.util.ShopConfig;
@@ -19,7 +22,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import com.fishing.dao.NotificationDAO;
 import com.fishing.enums.NotificationType;
@@ -40,14 +45,27 @@ public class CheckoutServlet extends HttpServlet {
 
     private final CartDAO cartDAO = new CartDAO();
     private final OrderDAO orderDAO = new OrderDAO();
+    private final AddressDAO addressDAO = new AddressDAO();
     
     private final NotificationDAO notificationDAO = new NotificationDAO();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         Object last = req.getSession().getAttribute(LAST_INFO);
-        showForm(req, resp, last instanceof OrderDAO.ShippingInfo
-                ? (OrderDAO.ShippingInfo) last : new OrderDAO.ShippingInfo());
+        OrderDAO.ShippingInfo info = last instanceof OrderDAO.ShippingInfo
+                ? (OrderDAO.ShippingInfo) last : new OrderDAO.ShippingInfo();
+
+        // Chưa có thông tin lần trước: điền sẵn địa chỉ mặc định trong sổ địa chỉ (phần của Dũng)
+        if (info.receiverName == null || info.receiverName.isBlank()) {
+            List<Address> addresses = findAddresses(req);
+            if (!addresses.isEmpty()) {
+                Address a = addresses.get(0);   // AddressDAO sắp địa chỉ mặc định lên đầu
+                info.receiverName = a.getReceiverName();
+                info.receiverPhone = a.getReceiverPhone();
+                info.shippingAddress = fullAddress(a);
+            }
+        }
+        showForm(req, resp, info);
     }
 
     @Override
@@ -110,9 +128,41 @@ public class CheckoutServlet extends HttpServlet {
         req.setAttribute("freeShippingThreshold", ShopConfig.FREE_SHIPPING_THRESHOLD);
         req.setAttribute("paymentMethods", enabledPaymentMethods());
 
+        // Sổ địa chỉ của khách để chọn nhanh ở form (id -> địa chỉ đầy đủ)
+        List<Address> addresses = findAddresses(req);
+        Map<String, String> addressText = new LinkedHashMap<>();
+        for (Address a : addresses) {
+            addressText.put(a.getId(), fullAddress(a));
+        }
+        req.setAttribute("addresses", addresses);
+        req.setAttribute("addressText", addressText);
+
         req.setAttribute("cart", cart);
         req.setAttribute("info", info);
         req.getRequestDispatcher(VIEW).forward(req, resp);
+    }
+
+    /** Địa chỉ đã lưu của khách đang đăng nhập; chưa đăng nhập thì danh sách rỗng. */
+    private List<Address> findAddresses(HttpServletRequest req) {
+        Object c = req.getSession().getAttribute("customer");
+        if (c instanceof Customer) {
+            return addressDAO.findByCustomer(((Customer) c).getCustomerId());
+        }
+        return new ArrayList<>();
+    }
+
+    /** Ghép số nhà/đường, phường, quận, tỉnh thành một dòng, bỏ phần trống. */
+    private String fullAddress(Address a) {
+        StringBuilder sb = new StringBuilder();
+        for (String part : new String[]{a.getStreet(), a.getWard(), a.getDistrict(), a.getCity()}) {
+            if (part != null && !part.isBlank()) {
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
+                sb.append(part.trim());
+            }
+        }
+        return sb.toString();
     }
 
     private String validate(OrderDAO.ShippingInfo info) {

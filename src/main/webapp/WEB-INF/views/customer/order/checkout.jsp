@@ -19,6 +19,22 @@
     <form method="post" action="${ctx}/checkout" class="form checkout-form" id="checkoutForm">
         <h2>Thông tin nhận hàng</h2>
 
+        <%-- Chọn nhanh từ Sổ địa chỉ (phần của Dũng); chọn xong JS điền vào 3 ô bên dưới --%>
+        <c:if test="${not empty addresses}">
+            <label for="savedAddress">Chọn từ sổ địa chỉ</label>
+            <select id="savedAddress">
+                <option value="">-- Nhập địa chỉ khác --</option>
+                <c:forEach var="a" items="${addresses}">
+                    <option data-name="<c:out value='${a.receiverName}'/>"
+                            data-phone="<c:out value='${a.receiverPhone}'/>"
+                            data-address="<c:out value='${addressText[a.id]}'/>">
+                        <c:if test="${a['default']}">(Mặc định) </c:if><c:out value="${a.receiverName}"/> – <c:out value="${addressText[a.id]}"/>
+                    </option>
+                </c:forEach>
+            </select>
+            <p class="muted"><a href="${ctx}/addresses">Quản lý sổ địa chỉ</a></p>
+        </c:if>
+
         <label for="receiverName">Họ tên người nhận <span class="req">*</span></label>
         <input type="text" id="receiverName" name="receiverName" maxlength="100" required
                value="<c:out value='${info.receiverName}'/>">
@@ -85,6 +101,19 @@
 </div>
 
 <script>
+    // Chọn địa chỉ đã lưu -> điền họ tên, SĐT, địa chỉ
+    (function () {
+        var sel = document.getElementById('savedAddress');
+        if (!sel) { return; }
+        sel.addEventListener('change', function () {
+            var opt = sel.options[sel.selectedIndex];
+            if (!opt.value && !opt.getAttribute('data-name')) { return; }
+            document.getElementById('receiverName').value = opt.getAttribute('data-name') || '';
+            document.getElementById('receiverPhone').value = opt.getAttribute('data-phone') || '';
+            document.getElementById('shippingAddress').value = opt.getAttribute('data-address') || '';
+        });
+    })();
+
     // Chống bấm "Đặt hàng" nhiều lần (server cũng đã khóa giỏ hàng để chặn)
     document.getElementById('checkoutForm').addEventListener('submit', function () {
         var btn = document.getElementById('placeOrderBtn');
