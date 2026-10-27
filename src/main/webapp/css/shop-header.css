@@ -118,7 +118,11 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    background-color: lightslategray;
+    color: #8a6100;
+
 }
+
 
 /* ==========================================================================
    RESPONSIVE HEADER (Giao diện Mobile/Tablet)
