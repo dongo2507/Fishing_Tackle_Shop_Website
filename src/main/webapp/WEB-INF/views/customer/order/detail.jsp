@@ -46,6 +46,9 @@
                         <p class="muted">Đơn sẽ được giao sau khi cửa hàng xác nhận đã nhận tiền.</p>
                     </div>
                 </c:if>
+                <c:if test="${payment.method == 'MOMO' && payment.status == 'PENDING' && order.status != 'CANCELLED'}">
+                    <p><a class="btn btn-primary" href="${ctx}/payment/momo?orderId=${order.id}">Thanh toán bằng MoMo</a></p>
+                </c:if>
                 <c:if test="${payment.status == 'REFUNDED'}">
                     <p class="muted">Cửa hàng sẽ liên hệ để hoàn tiền cho bạn.</p>
                 </c:if>

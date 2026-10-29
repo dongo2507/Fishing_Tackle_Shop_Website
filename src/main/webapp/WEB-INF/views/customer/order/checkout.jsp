@@ -46,6 +46,7 @@
                     <span class="muted">
                         <c:choose>
                             <c:when test="${m == 'COD'}">Trả tiền mặt cho nhân viên giao hàng.</c:when>
+                            <c:when test="${m == 'MOMO'}">Quét mã QR bằng app MoMo sau khi bấm Đặt hàng.</c:when>
                             <c:otherwise>Chuyển khoản trước, thông tin tài khoản hiện sau khi đặt hàng. Đơn được giao sau khi cửa hàng nhận tiền.</c:otherwise>
                         </c:choose>
                     </span>
