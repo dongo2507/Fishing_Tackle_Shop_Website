@@ -20,7 +20,7 @@
     <div>
         <c:choose>
             <c:when test="${not empty mainSrc}">
-                <img id="mainImage" class="detail-main" src="${ctx}<c:out value='${mainSrc}'/>" alt="">
+                <img id="mainImage" class="detail-main" src="<c:out value='${mainSrc}'/>" alt="">
             </c:when>
             <c:otherwise>
                 <div class="no-image">Chưa có ảnh</div>
@@ -29,12 +29,12 @@
 
         <div class="gallery">
             <c:if test="${not empty product.thumbnailUrl}">
-                <img class="gallery-thumb" src="${ctx}<c:out value='${product.thumbnailUrl}'/>"
-                     data-full="${ctx}<c:out value='${product.thumbnailUrl}'/>" alt="">
+                <img class="gallery-thumb" src="<c:out value='${product.thumbnailUrl}'/>"
+                    data-full="<c:out value='${product.thumbnailUrl}'/>" alt="">
             </c:if>
             <c:forEach var="img" items="${images}">
-                <img class="gallery-thumb" src="${ctx}<c:out value='${img.imageUrl}'/>"
-                     data-full="${ctx}<c:out value='${img.imageUrl}'/>" alt="">
+                <img class="gallery-thumb" src="<c:out value='${img.imageUrl}'/>"
+                    data-full="<c:out value='${img.imageUrl}'/>" alt="">
             </c:forEach>
         </div>
     </div>
