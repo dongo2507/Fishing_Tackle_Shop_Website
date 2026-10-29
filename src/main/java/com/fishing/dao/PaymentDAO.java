@@ -104,6 +104,36 @@ public class PaymentDAO {
         }
     }
 
+    /** MoMo báo đã thanh toán thành công. MoMo có thể báo 2 lần nên lần sau bỏ qua. */
+    public void confirmOnline(Long orderId, long amount, String transId) {
+        EntityManager em = JPAUtil.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Payment p = findLocked(em, orderId);
+            if (p == null || p.getMethod() != PaymentMethod.MOMO) {
+                throw new BusinessException("Đơn hàng không thanh toán bằng MoMo.");
+            }
+            if (p.getStatus() == PaymentStatus.PENDING) {
+                if (p.getAmount().longValue() != amount) {
+                    throw new BusinessException("Số tiền MoMo báo về không khớp với đơn hàng.");
+                }
+                // Đơn đã hủy mà khách vẫn trả tiền thì đánh dấu cần hoàn tiền
+                p.setStatus(p.getOrder().getStatus() == OrderStatus.CANCELLED
+                        ? PaymentStatus.REFUNDED : PaymentStatus.SUCCESS);
+                p.setPaymentDate(LocalDateTime.now());
+                p.setTransactionRef("MOMO-" + transId);
+            }
+            em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
     public Payment findByOrder(Long orderId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
