@@ -6,6 +6,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 public class CustomerDAO {
 
     /** Tìm theo email (không phân biệt hoa thường). */
@@ -66,6 +70,50 @@ public class CustomerDAO {
                 tx.rollback();
             }
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+    /** Cập nhật họ tên và số điện thoại (email dùng để đăng nhập nên không đổi ở đây). */
+    public boolean updateProfile(Long id, String fullName, String phone) {
+        EntityManager em = JPAUtil.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Customer c = em.find(Customer.class, id);
+            if (c == null) {
+                tx.rollback();
+                return false;
+            }
+            c.setFullName(fullName);
+            c.setPhone(phone);
+            tx.commit();
+            return true;
+        } catch (RuntimeException e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /** Lấy tên hiển thị của nhiều khách cùng lúc (id -> họ tên). */
+    public Map<Long, String> findNamesByIds(Collection<Long> ids) {
+        Map<Long, String> result = new HashMap<>();
+        if (ids == null || ids.isEmpty()) {
+            return result;
+        }
+        EntityManager em = JPAUtil.createEntityManager();
+        try {
+            for (Object[] row : em.createQuery(
+                            "SELECT c.id, c.fullName FROM Customer c WHERE c.id IN :ids", Object[].class)
+                    .setParameter("ids", ids)
+                    .getResultList()) {
+                result.put((Long) row[0], (String) row[1]);
+            }
+            return result;
         } finally {
             em.close();
         }

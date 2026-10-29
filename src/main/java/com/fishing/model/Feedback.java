@@ -25,6 +25,10 @@ public class Feedback {
     @Column(name = "customer_id")
     private Long customerId;
 
+    /** Tên khách để hiển thị (không lưu DB, FeedbackDAO điền khi đọc). */
+    @Transient
+    private String customerName;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -49,6 +53,9 @@ public class Feedback {
 
     public Long getCustomerId() { return customerId; }
     public void setCustomerId(Long customerId) { this.customerId = customerId; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

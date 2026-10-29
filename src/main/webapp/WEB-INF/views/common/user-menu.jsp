@@ -26,7 +26,16 @@
 
     <c:choose>
         <c:when test="${not empty sessionScope.role}">
-            <span class="user-name">Xin chào, <c:out value="${sessionScope.currentUserName}"/></span>
+            <c:choose>
+                <c:when test="${sessionScope.role == 'CUSTOMER'}">
+                    <a class="user-name user-name-link" href="${ctx}/account/profile" title="Thông tin cá nhân">
+                        Xin chào, <c:out value="${sessionScope.currentUserName}"/>
+                    </a>
+                </c:when>
+                <c:otherwise>
+                    <span class="user-name">Xin chào, <c:out value="${sessionScope.currentUserName}"/></span>
+                </c:otherwise>
+            </c:choose>
 
 
             <c:if test="${sessionScope.role == 'ADMIN'}">

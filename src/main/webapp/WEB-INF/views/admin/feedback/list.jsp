@@ -42,7 +42,7 @@
                     <span class="star ${i <= f.rating ? 'on' : ''}">★</span>
                 </c:forEach>
             </span>
-            <strong>Khách hàng #${f.customerId}</strong>
+            <strong><c:out value="${not empty f.customerName ? f.customerName : 'Khách hàng'}"/></strong>
             <span>${f.createdAt.toLocalDate()}</span>
             <span>·</span>
             <a href="${ctx}/admin/products?action=edit&id=${f.product.id}">

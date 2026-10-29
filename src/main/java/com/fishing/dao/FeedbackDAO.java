@@ -8,6 +8,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FeedbackDAO {
 
@@ -35,12 +38,14 @@ public class FeedbackDAO {
     public List<Feedback> findByProduct(Long productId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
-            return em.createQuery(
+            List<Feedback> list = em.createQuery(
                             "SELECT f FROM Feedback f LEFT JOIN FETCH f.subFeedbacks s "
                                     + "WHERE f.product.id = :pid "
                                     + "ORDER BY f.createdAt DESC, s.createdAt ASC", Feedback.class)
                     .setParameter("pid", productId)
                     .getResultList();
+            fillCustomerNames(list);
+            return list;
         } finally {
             em.close();
         }
@@ -82,7 +87,9 @@ public class FeedbackDAO {
             if (productId != null) {
                 q.setParameter("pid", productId);
             }
-            return q.getResultList();
+            List<Feedback> list = q.getResultList();
+            fillCustomerNames(list);
+            return list;
         } finally {
             em.close();
         }
@@ -184,6 +191,16 @@ public class FeedbackDAO {
             throw e;
         } finally {
             em.close();
+        }
+    }
+
+    /** Điền tên khách vào từng đánh giá (một truy vấn cho cả danh sách). */
+    private void fillCustomerNames(List<Feedback> list) {
+        Set<Long> ids = list.stream().map(Feedback::getCustomerId)
+                .filter(java.util.Objects::nonNull).collect(Collectors.toSet());
+        Map<Long, String> names = new CustomerDAO().findNamesByIds(ids);
+        for (Feedback f : list) {
+            f.setCustomerName(names.get(f.getCustomerId()));
         }
     }
 }
