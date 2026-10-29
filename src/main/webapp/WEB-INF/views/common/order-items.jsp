@@ -20,7 +20,7 @@
                 <div class="cart-product">
                     <c:choose>
                         <c:when test="${not empty li.thumbnailUrl}">
-                            <img class="thumb" src="${ctx}<c:out value='${li.thumbnailUrl}'/>" alt="">
+                            <img class="thumb" src="<c:out value='${li.thumbnailUrl}'/>" alt="">
                         </c:when>
                         <c:otherwise><span class="thumb thumb-empty"></span></c:otherwise>
                     </c:choose>
