@@ -5,7 +5,7 @@ public enum PaymentMethod {
     COD("Thanh toán khi nhận hàng (COD)", true),
     BANK_TRANSFER("Chuyển khoản ngân hàng", true),
     VNPAY("Ví VNPay", false),
-    MOMO("Ví MoMo", false);
+   MOMO("Ví MoMo", true);
 
     private final String label;
     private final boolean enabled;
